@@ -1,2 +1,7 @@
 .trailhead/*
 !.trailhead/config.json
+
+node_modules/
+.turbo/
+dist/
+*.tsbuildinfo

@@ -1,0 +1,12 @@
+{
+  "oxc.enable": true,
+  "oxc.lint.run": "onSave",
+  "oxc.fmt.enabled": true,
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "explicit"
+  },
+  "js/ts.experimental.useTsgo": true,
+  "js/ts.tsdk.path": "./node_modules/typescript"
+}

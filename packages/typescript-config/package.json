@@ -1,0 +1,14 @@
+{
+  "name": "@repo/typescript-config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./tsconfig.node.json": "./tsconfig.node.json",
+    "./tsconfig.browser.json": "./tsconfig.browser.json",
+    "./tsconfig.react.json": "./tsconfig.react.json",
+    "./tsconfig.vitest.json": "./tsconfig.vitest.json",
+    "./tsconfig.playwright.json": "./tsconfig.playwright.json"
+  }
+}

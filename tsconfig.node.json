@@ -1,0 +1,8 @@
+{
+  "extends": "@repo/typescript-config/tsconfig.node.json",
+  "include": ["*.mts", "lib/**/*.ts", "lib/**/*.mts", "lib/**/*.cts", "lib/**/*.cjs"],
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true
+  }
+}
