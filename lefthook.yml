@@ -1,0 +1,14 @@
+pre-commit:
+  commands:
+    lint:
+      run: pnpm run lint
+    format:
+      run: pnpm run format
+    typecheck:
+      run: pnpm run typecheck
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm exec commitlint --edit "{1}"
+    trailhead:
+      run: node lib/trailhead-commit-msg.cjs "{1}"

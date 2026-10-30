@@ -14,7 +14,8 @@
     "typecheck:root": "tsc --noEmit --project tsconfig.node.json",
     "format": "oxfmt --check .",
     "format:fix": "oxfmt --write .",
-    "test:tooling": "node --test lib/*.test.mts"
+    "test:tooling": "node --test lib/*.test.mts",
+    "prepare": "lefthook install"
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.4",
