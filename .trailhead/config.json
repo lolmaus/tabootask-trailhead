@@ -1,0 +1,48 @@
+{
+  "ticket": {
+    "language": "en"
+  },
+  "models": {
+    "codex": {
+      "plan": {
+        "model": "gpt-6-astra",
+        "effort": "high"
+      },
+      "execute": {
+        "model": "gpt-6.1-sol",
+        "effort": "medium"
+      },
+      "research": {
+        "model": "gpt-6.1-sol",
+        "effort": "medium"
+      },
+      "review": {
+        "model": "gpt-6.1-sol",
+        "effort": "medium"
+      },
+      "debug": {
+        "model": "gpt-6.1-sol",
+        "effort": "medium"
+      },
+      "verify": {
+        "model": "gpt-6.1-sol",
+        "effort": "medium"
+      },
+      "codebase-map": {
+        "model": "gpt-6-luna",
+        "effort": "low"
+      }
+    }
+  },
+  "design": "disk",
+  "design.approval": "explicit",
+  "tdd": "on",
+  "effort": "standard",
+  "acceptance": {
+    "browser": "auto"
+  },
+  "testing": {
+    "webapp": true
+  },
+  "plan_review": "off"
+}
