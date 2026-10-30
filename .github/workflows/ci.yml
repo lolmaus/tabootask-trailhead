@@ -1,0 +1,26 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  tooling:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Bootstrap pnpm
+        run: npm install --global pnpm@12.16.1
+      - run: pnpm install --frozen-lockfile
+      - name: Verify pinned versions
+        run: |
+          test "$(node --version)" = "v$(cat .nvmrc)"
+          test "$(pnpm --version)" = "12.16.1"
+      - run: pnpm run lint
+      - run: pnpm run format
+      - run: pnpm run typecheck
+      - run: pnpm run test:tooling
