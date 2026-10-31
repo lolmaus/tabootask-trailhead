@@ -8,6 +8,7 @@ pnpm install --frozen-lockfile
 pnpm run lint
 pnpm run format
 pnpm run typecheck
+pnpm run test
 pnpm run test:tooling
 ```
 
@@ -32,3 +33,9 @@ configs change. Future builds must declare real outputs and cache-affecting
 environment variables. No applications, deployment or backups exist yet: the
 first deployable feature slice must supply hosted development, daily backups
 and a verified restore.
+
+`@repo/task-markdown` exports `parseTaskMarkdown(source)` and
+`classifyTaskDates(document, { nowEpochMilliseconds, viewerZone })` for browser
+consumers. Ranges are end-exclusive UTF-16 source offsets; totals are bigint.
+The returned source is unchanged. Dates retain their written spelling; timing
+classification is separate and can rerun as the clock advances.

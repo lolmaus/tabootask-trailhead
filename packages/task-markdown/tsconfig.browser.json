@@ -1,0 +1,4 @@
+{
+  "extends": "@repo/typescript-config/tsconfig.browser.json",
+  "include": ["src/**/*.ts"]
+}

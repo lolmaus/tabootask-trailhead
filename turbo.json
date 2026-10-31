@@ -29,6 +29,10 @@
     },
     "//#typecheck:root": {
       "outputs": []
+    },
+    "test": {
+      "dependsOn": ["^test"],
+      "outputs": []
     }
   }
 }

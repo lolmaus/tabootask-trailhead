@@ -15,7 +15,8 @@
     "format": "oxfmt --check .",
     "format:fix": "oxfmt --write .",
     "test:tooling": "node --test lib/*.test.mts",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install",
+    "test": "turbo run test"
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.4",

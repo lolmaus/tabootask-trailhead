@@ -1,0 +1,30 @@
+{
+  "name": "@repo/task-markdown",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "oxlint --deny-warnings .",
+    "lint:fix": "oxlint --deny-warnings --fix .",
+    "typecheck": "tsc --project tsconfig.browser.json && tsc --project tsconfig.node.json && tsc --project tsconfig.vitest.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@js-temporal/polyfill": "0.5.1",
+    "mdast-util-from-markdown": "2.1.0",
+    "mdast-util-gfm-task-list-item": "2.0.0",
+    "micromark-extension-gfm-task-list-item": "2.1.0"
+  },
+  "devDependencies": {
+    "@repo/oxlint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/mdast": "4.0.4",
+    "@types/node": "26.6.6",
+    "oxlint": "1.90.0",
+    "typescript": "7.0.2",
+    "vitest": "5.0.5"
+  }
+}

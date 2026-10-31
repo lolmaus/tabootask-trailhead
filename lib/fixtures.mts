@@ -33,5 +33,10 @@ export function fixture() {
     join(dir, 'packages/oxlint-config/node_modules'),
     'dir'
   );
+  symlinkSync(
+    join(root, 'packages/task-markdown/node_modules'),
+    join(dir, 'packages/task-markdown/node_modules'),
+    'dir'
+  );
   return { dir, cleanup: () => rmSync(dir, { recursive: true, force: true }) };
 }
