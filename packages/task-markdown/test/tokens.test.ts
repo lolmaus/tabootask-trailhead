@@ -67,3 +67,21 @@ test('formatted tokens remain standalone and bare URL query text stays literal',
     ['@real'],
   ]);
 });
+
+test('standalone boundaries inspect complete astral letters, digits and marks', () => {
+  for (const character of ['𐐀', '𝟘', '𝅥']) {
+    for (const [candidate, active] of [['@alice', '@bob'], ['#tag', '#real'], ['~9', '~4'], ['2026-11-06', '2026-11-07']]) {
+      for (const embedded of [character + candidate, candidate + '.' + character]) {
+        const source = `- ${embedded} ${active}`;
+        const doc = parseTaskMarkdown(source);
+        expect(doc.tasks[0]!.tokens.map(t => t.source), source).toEqual([active]);
+        expect(doc.source).toBe(source);
+        for (const token of doc.tasks[0]!.tokens) expect(source.slice(token.range.start, token.range.end)).toBe(token.source);
+      }
+    }
+    expect(parseTaskMarkdown(`- ~9${character} ~4`).tasks[0]!.ownEstimate?.value).toBe(4n);
+    expect(parseTaskMarkdown(`- 2026-11-06${character} 2026-11-07`).tasks[0]!.date?.source).toBe('2026-11-07');
+    expect(parseTaskMarkdown(`- @alice${character} #tag${character}`).tasks[0]!.tokens.map(t => t.source)).toEqual([`@alice${character}`, `#tag${character}`]);
+  }
+  expect(parseTaskMarkdown('- 𐐀~9 ~4').tasks[0]!.ownEstimate?.range).toEqual({ start: 7, end: 9 });
+});
