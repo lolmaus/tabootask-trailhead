@@ -8,7 +8,12 @@ export function standalone(source: string, start: number, end: number): boolean 
   if ((start - before) % 2 === 1) return false;
   if (/[\p{L}\p{N}\p{M}_@#~./+-]/u.test(source[before - 1] ?? '')) return false;
   const after = source[end] ?? '';
-  if (/[\p{L}\p{N}\p{M}_@#~/+:-]/u.test(after)) return false;
+  if (
+    after === ':' &&
+    (/^[0-9]/u.test(source[end + 1] ?? '') || source.slice(start, end).includes('T'))
+  )
+    return false;
+  if (/[\p{L}\p{N}\p{M}_@#~/+-]/u.test(after)) return false;
   if ((after === '.' || after === ',') && /[\p{L}\p{N}_]/u.test(source[end + 1] ?? ''))
     return false;
   return true;
@@ -24,7 +29,8 @@ export function recognize(document: TaskDocument): void {
         const start = range.start + match.index;
         if (!standalone(document.source, start, start + match[0].length)) continue;
         if (/^[0-9]/u.test(match[0])) {
-          if (task.date || !validDate(match[0])) continue;
+          if (task.date || !validDate(match[0]) || document.source[start + match[0].length] === '[')
+            continue;
           if (
             match[0].length === 10 &&
             /^[ \t]+[0-9]{1,2}:/u.test(document.source.slice(start + 10))

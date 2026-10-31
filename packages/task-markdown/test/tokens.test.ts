@@ -47,7 +47,14 @@ test('source slices never assemble tokens across formatting or lines', () => {
 });
 
 test('sentence punctuation surrounds tokens without accepting date extensions', () => {
- const doc = parseTaskMarkdown('- @alice: #release; ~3: 2026-11-07!');
- expect(doc.tasks[0]!.tokens.map(t=>t.source)).toEqual(['@alice','#release','~3','2026-11-07']);
- expect(parseTaskMarkdown('- 2026-11-06T00:00[Europe/Berlin] 2026-11-07').tasks[0]!.date?.source).toBe('2026-11-07');
+  const doc = parseTaskMarkdown('- @alice: #release; ~3: 2026-11-07!');
+  expect(doc.tasks[0]!.tokens.map((t) => t.source)).toEqual([
+    '@alice',
+    '#release',
+    '~3',
+    '2026-11-07',
+  ]);
+  expect(
+    parseTaskMarkdown('- 2026-11-06T00:00[Europe/Berlin] 2026-11-07').tasks[0]!.date?.source
+  ).toBe('2026-11-07');
 });
