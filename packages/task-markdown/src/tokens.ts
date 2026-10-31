@@ -19,7 +19,7 @@ export function recognize(document: TaskDocument): void {
     for (const range of task.proseRanges) {
       const prose = document.source.slice(range.start, range.end);
       for (const match of prose.matchAll(
-        /[@#][\p{L}\p{N}][\p{L}\p{N}\p{M}_-]*|~[0-9]+|[0-9]{4}-[0-9]{2}-[0-9]{2}/gu
+        /[@#][\p{L}\p{N}][\p{L}\p{N}\p{M}_-]*|~[0-9]+|[0-9]{4}-[0-9]{2}-[0-9]{2}(?:T[0-9]{2}:[0-9]{2}(?::[0-9]{2}(?:\.[0-9]{1,3})?)?(?:Z|[+-][0-9]{2}:[0-9]{2})?)?/gu
       )) {
         const start = range.start + match.index;
         if (!standalone(document.source, start, start + match[0].length)) continue;
