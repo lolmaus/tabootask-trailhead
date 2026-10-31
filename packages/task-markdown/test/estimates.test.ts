@@ -41,3 +41,13 @@ test('invalid estimates and split syntax never consume a first-active slot', () 
   const source = String.raw`- ~3.5 ~-3 ~+3 ~1e3 ~1_000 ~1,000 ~3/4 x~3 ~**3** \~9 ~4 ~99`;
   expect(parseTaskMarkdown(source).tasks[0]!.ownEstimate?.source).toBe('~4');
 });
+
+test('parent continuation after children owns the first estimate; outside prose owns none', () => {
+  const source =
+    'Outside @outside #outside ~90 2026-11-06\n\n- Parent\n  - Child ~5\n\n  Own continuation ~3 ~99\n\nA paragraph\n\n1. First ~2\n2. Second ~4\n\nOther paragraph\n\n* Third ~6\n+ Fourth ~8\n';
+  const doc = parseTaskMarkdown(source);
+  expect(doc.tasks.map((t) => t.total)).toEqual([8n, 5n, 2n, 4n, 6n, 8n]);
+  expect(doc.tasks[0]!.ownEstimate?.source).toBe('~3');
+  expect(doc.tasks[0]!.tokens.map((t) => t.source)).toEqual(['~3']);
+  expect(doc.source).toBe(source);
+});
