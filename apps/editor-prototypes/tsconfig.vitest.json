@@ -1,0 +1,5 @@
+{
+  "extends": "@repo/typescript-config/tsconfig.vitest.json",
+  "include": ["test/**/*.test.ts"],
+  "compilerOptions": { "lib": ["ES2024", "DOM", "DOM.Iterable"], "skipLibCheck": true }
+}

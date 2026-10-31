@@ -21,6 +21,11 @@ include its `Refs: #<number>` trailer. `pnpm run prepare` reinstalls hooks
 idempotently; an existing hook is preserved in `.git/hooks/commit-msg.old`.
 Git's ordinary `--no-verify` bypass is available.
 
+The local [editor experiments](apps/editor-prototypes/README.md) compare three
+source-preserving renderings with the shared parser. Run them with
+`pnpm --filter @repo/editor-prototypes dev` and open <http://localhost:3100/>.
+They are throwaway prototypes, with no persistence or backend.
+
 Add `apps/web` and `apps/backend` incrementally as their real features arrive.
 Each consumer declares its tools and types directly, uses `workspace:*` for
 shared configs, and owns source paths in local environment configs. Create only
@@ -30,7 +35,7 @@ or select consumer files. Add regression tests one behavior at a time.
 
 Turbo includes root and workspace checks and invalidates them when shared
 configs change. Future builds must declare real outputs and cache-affecting
-environment variables. No applications, deployment or backups exist yet: the
+environment variables. No deployed application or backups exist yet: the
 first deployable feature slice must supply hosted development, daily backups
 and a verified restore.
 
