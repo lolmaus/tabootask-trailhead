@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { parseTaskMarkdown } from '../src/index.ts';
+import { parseTaskMarkdown, classifyTaskDates } from '../src/index.ts';
 
 test('Unicode names preserve spelling, repeated occurrences and raw ranges', () => {
   const source = '- **@алиса** #дом-работа #release_v2 @alice @alice !area';
@@ -99,4 +99,44 @@ test('standalone boundaries inspect complete astral letters, digits and marks', 
     ).toEqual([`@alice${character}`, `#tag${character}`]);
   }
   expect(parseTaskMarkdown('- 𐐀~9 ~4').tasks[0]!.ownEstimate?.range).toEqual({ start: 7, end: 9 });
+});
+
+test('multiline repeated metadata selects independent parent and child slots', () => {
+  const source =
+    '- Parent\n  Before 2026-11-07 @alice #release ~2\n  - Child 2026-11-08 @bob #child ~3\n    Continued 2026-11-05 @bob #child ~88\n\n  After 2026-11-06 @alice #release ~99\n';
+  const doc = parseTaskMarkdown(source);
+  expect(doc.tasks).toHaveLength(2);
+  const parent = doc.tasks[0]!;
+  const child = doc.tasks[1]!;
+  expect(parent.children.map((t) => t.id)).toEqual([child.id]);
+  expect(child.parentId).toBe(parent.id);
+  expect(parent.tokens.map((t) => t.source)).toEqual([
+    '2026-11-07',
+    '@alice',
+    '#release',
+    '~2',
+    '@alice',
+    '#release',
+  ]);
+  expect(child.tokens.map((t) => t.source)).toEqual([
+    '2026-11-08',
+    '@bob',
+    '#child',
+    '~3',
+    '@bob',
+    '#child',
+  ]);
+  expect([parent.date?.source, child.date?.source]).toEqual(['2026-11-07', '2026-11-08']);
+  expect([parent.ownEstimate?.value, child.ownEstimate?.value]).toEqual([2n, 3n]);
+  expect([parent.total, child.total]).toEqual([5n, 3n]);
+  expect(
+    classifyTaskDates(doc, {
+      nowEpochMilliseconds: Date.parse('2026-11-06T00:00:00Z'),
+      viewerZone: 'UTC',
+    }).map((date) => date.classification)
+  ).toEqual(['future', 'future']);
+  for (const task of doc.tasks)
+    for (const token of task.tokens)
+      expect(source.slice(token.range.start, token.range.end)).toBe(token.source);
+  expect(doc.source).toBe(source);
 });
