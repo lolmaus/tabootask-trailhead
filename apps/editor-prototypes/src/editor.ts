@@ -1,9 +1,11 @@
-import { EditorSelection, StateEffect, StateField } from '@codemirror/state';
+import { EditorSelection, RangeSet, StateEffect, StateField } from '@codemirror/state';
 import type { EditorState, Range } from '@codemirror/state';
 import {
   Decoration,
   EditorView,
+  GutterMarker,
   WidgetType,
+  gutter,
   keymap,
   drawSelection,
   highlightActiveLine,
@@ -99,10 +101,54 @@ export function selectedLines(state: EditorState): Set<number> {
   return lines;
 }
 
+class TotalMarker extends GutterMarker {
+  constructor(
+    readonly value: string,
+    readonly spacer = false
+  ) {
+    super();
+  }
+  override eq(other: TotalMarker): boolean {
+    return this.value === other.value && this.spacer === other.spacer;
+  }
+  override toDOM(): HTMLElement {
+    const span = document.createElement('span');
+    span.className = `task-indicator ${this.spacer ? 'total-spacer' : 'total'}`;
+    span.textContent = `Σ ${this.value}`;
+    span.title = 'Computed total';
+    return span;
+  }
+}
+function totalMarkers(state: EditorState): {
+  markers: RangeSet<TotalMarker>;
+  spacer: TotalMarker;
+} {
+  let widest = '0';
+  const markers: Range<TotalMarker>[] = [];
+  for (const task of state.field(modelField).document.tasks) {
+    if (!task.hasEstimate) continue;
+    const value = task.total.toString();
+    if (value.length > widest.length) widest = value;
+    markers.push(new TotalMarker(value).range(state.doc.lineAt(task.range.start).from));
+  }
+  return { markers: RangeSet.of(markers, true), spacer: new TotalMarker(widest, true) };
+}
+const totalGutterField = StateField.define<ReturnType<typeof totalMarkers>>({
+  create: totalMarkers,
+  update: (value, tr) => (tr.docChanged ? totalMarkers(tr.state) : value),
+  provide: (field) =>
+    gutter({
+      class: 'cm-task-totals',
+      markers: (view) => view.state.field(field).markers,
+      initialSpacer: (view) => view.state.field(field).spacer,
+      updateSpacer: (_spacer, update) => update.state.field(field).spacer,
+    }),
+});
+
 class Label extends WidgetType {
   constructor(
     readonly text: string,
-    readonly kind = 'total'
+    readonly kind: 'detail' | 'bullet'
   ) {
     super();
   }
@@ -168,12 +214,6 @@ function decorations(state: EditorState): DecorationSet {
       );
     }
     const line = state.doc.lineAt(task.range.start);
-    if (task.hasEstimate)
-      ranges.push(
-        Decoration.widget({ widget: new Label(`Σ ${task.total.toString()}`), side: 1 }).range(
-          line.to
-        )
-      );
     if (variant === 'indicators') {
       const detail = [
         task.ownEstimate ? `own ${task.ownEstimate.value.toString()}` : '',
@@ -291,6 +331,7 @@ export function createEditor(
       zoneField,
       markdown(),
       modelField,
+      totalGutterField,
       history(),
       keymap.of([...defaultKeymap, ...historyKeymap]),
       drawSelection(),

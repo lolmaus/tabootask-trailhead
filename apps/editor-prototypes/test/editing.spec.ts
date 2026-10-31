@@ -1,6 +1,64 @@
 import { expect, test } from '@playwright/test';
 import type { Variant } from '../src/editor.ts';
 
+test('computed totals stay in one left gutter across nesting, wrapping and edits', async ({
+  page,
+}) => {
+  await page.goto('/?variant=highlight');
+  await page.waitForFunction(() => !!window.editorLab);
+  const source = `- [ ] Parent ~4 ${'a long note '.repeat(10)}\n  - Child ~3\n    - Grandchild ~2\n- Zero ~0\n- Empty\n`;
+  await page.evaluate((text) => window.editorLab!.load(text), source);
+  const totals = page.locator('.cm-task-totals .task-indicator.total');
+  await expect(totals).toHaveText(['Σ 9', 'Σ 5', 'Σ 2', 'Σ 0']);
+  await expect(page.locator('.cm-content .task-indicator.total')).toHaveCount(0);
+  const content = await page.getByLabel('Markdown editor').boundingBox();
+  expect(content).not.toBeNull();
+  const boxes = await totals.evaluateAll((elements) =>
+    elements.map((el) => {
+      const box = el.getBoundingClientRect();
+      return { right: box.right, top: box.top };
+    })
+  );
+  for (const box of boxes) {
+    expect(box.right).toBeLessThan(content!.x);
+    expect(Math.abs(box.right - boxes[0]!.right)).toBeLessThan(1);
+  }
+  const parent = await page
+    .locator('.cm-line')
+    .filter({ hasText: /^- \[ \] Parent/ })
+    .boundingBox();
+  const child = await page
+    .locator('.cm-line')
+    .filter({ hasText: /^  - Child/ })
+    .boundingBox();
+  expect(parent).not.toBeNull();
+  expect(child).not.toBeNull();
+  expect(boxes[0]!.top).toBeGreaterThanOrEqual(parent!.y);
+  expect(boxes[0]!.top).toBeLessThan(parent!.y + 26);
+  expect(boxes[1]!.top).toBeGreaterThanOrEqual(child!.y);
+  expect(boxes[1]!.top).toBeLessThan(child!.y + 26);
+  for (const variant of ['indicators', 'rich', 'highlight'] as Variant[]) {
+    await page.evaluate((v) => window.editorLab!.switchVariant(v), variant);
+    await expect(totals).toHaveText(['Σ 9', 'Σ 5', 'Σ 2', 'Σ 0']);
+    await expect(page.locator('.cm-content .task-indicator.total')).toHaveCount(0);
+    expect(await page.evaluate(() => window.editorLab!.source())).toBe(source);
+  }
+  await page.getByLabel('Markdown editor').click();
+  await page.keyboard.press('Control+End');
+  await page.keyboard.insertText('- [ ] Phone test ~');
+  await page.keyboard.insertText('2');
+  await expect(totals.last()).toHaveText('Σ 2');
+  expect(await page.evaluate(() => window.editorLab!.source())).toBe(
+    `${source}- [ ] Phone test ~2`
+  );
+  expect(await page.evaluate(() => window.editorLab!.view.state.selection.main.head)).toBe(
+    source.length + '- [ ] Phone test ~2'.length
+  );
+  await page.keyboard.press('Control+z');
+  await expect(totals).toHaveText(['Σ 9', 'Σ 5', 'Σ 2', 'Σ 0']);
+  expect(await page.evaluate(() => window.editorLab!.source())).toBe(source);
+});
+
 test('highlighted source gives ordinary Markdown visible formatting without changing source', async ({
   page,
 }) => {

@@ -262,8 +262,24 @@ textarea:focus-visible {
   overflow: auto;
 }
 .cm-content {
-  padding: 25px 22px 80px;
+  padding: 25px 12px 80px;
   caret-color: var(--accent);
+}
+.editor-host .cm-editor .cm-gutters {
+  background: var(--panel);
+  border: 0;
+  color: var(--accent);
+}
+.cm-task-totals .cm-gutterElement {
+  min-width: 54px;
+  padding: 0 10px 0 12px;
+  text-align: right;
+  white-space: nowrap;
+}
+.cm-task-totals .task-indicator {
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  margin-left: 0;
 }
 .cm-line {
   padding: 0;

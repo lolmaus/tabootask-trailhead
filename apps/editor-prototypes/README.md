@@ -20,6 +20,11 @@ Scenario loading replaces the current document. No edits survive a reload.
 The appearance picker supports system, light, and dark. Radix Select is the
 small accessible component-library sample.
 
+Computed totals occupy CodeMirror's left gutter, aligned with each task's
+first line independently of indentation. They stay outside editable source,
+including when lines wrap. The gutter reserves space for the widest total
+in the document so scrolling between tasks does not change its width.
+
 ```sh
 pnpm --filter @repo/editor-prototypes test
 pnpm --filter @repo/editor-prototypes test:browser --project=chromium

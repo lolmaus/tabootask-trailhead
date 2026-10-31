@@ -262,7 +262,7 @@ export function Lab() {
           <p>
             The fixed comparison clock is 6 Nov 2026, 00:00 UTC. Only overdue active dates receive
             urgency styling. Own estimates stay in source; <strong>Σ</strong> identifies exact
-            computed totals.
+            computed totals in the left margin, aligned independently of task indentation.
           </p>
           <p>
             Timings measure synchronous parsing and decoration work, not paint or input latency.
