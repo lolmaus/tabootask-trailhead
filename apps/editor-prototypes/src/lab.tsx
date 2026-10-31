@@ -219,6 +219,10 @@ export function Lab() {
               className="primary"
               onClick={() => {
                 const text = controller.current?.source() ?? '';
+                if (!navigator.clipboard?.writeText) {
+                  setCopyResult('Clipboard unavailable; select and copy in the editor');
+                  return;
+                }
                 void navigator.clipboard.writeText(text).then(
                   () => setCopyResult('Copied Markdown'),
                   () => setCopyResult('Clipboard unavailable; select and copy in the editor')

@@ -1,6 +1,19 @@
 import { expect, test } from '@playwright/test';
 import type { Variant } from '../src/editor.ts';
 
+test('copy action explains unavailable browser clipboard without throwing', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true });
+  });
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.goto('/');
+  await page.waitForFunction(() => !!window.editorLab);
+  await page.getByRole('button', { name: 'Copy as Markdown', exact: true }).click();
+  await expect(page.getByRole('status')).toContainText('Clipboard unavailable');
+  expect(errors).toEqual([]);
+});
+
 for (const variant of ['highlight', 'indicators', 'rich'] as const) {
   test(`${variant}: exact untouched source, keyboard edits, source checkbox and undo`, async ({
     page,
