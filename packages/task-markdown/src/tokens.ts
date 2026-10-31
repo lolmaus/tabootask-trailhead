@@ -8,7 +8,8 @@ export function standalone(source: string, start: number, end: number): boolean 
   if (/[\p{L}\p{N}\p{M}_@#~./+-]/u.test(source[before - 1] ?? '')) return false;
   const after = source[end] ?? '';
   if (/[\p{L}\p{N}\p{M}_@#~/+:-]/u.test(after)) return false;
-  if (after === '.' && /[\p{L}\p{N}_]/u.test(source[end + 1] ?? '')) return false;
+  if ((after === '.' || after === ',') && /[\p{L}\p{N}_]/u.test(source[end + 1] ?? ''))
+    return false;
   return true;
 }
 
