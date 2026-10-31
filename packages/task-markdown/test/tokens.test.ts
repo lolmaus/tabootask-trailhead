@@ -17,6 +17,14 @@ test('Unicode names preserve spelling, repeated occurrences and raw ranges', () 
 });
 
 test('only standalone whole names activate and odd raw backslashes escape', () => {
- const source = String.raw`- user@example.com fix#release @alice.smith #release.md @ok. (#fine), \@one \\@two \\\#three \\\\#four @é @7 _@bad @bad_name`;
- expect(parseTaskMarkdown(source).tasks[0]!.tokens.map(t => t.source)).toEqual(['@ok', '#fine', '@two', '#four', '@é', '@7', '@bad_name']);
+  const source = String.raw`- user@example.com fix#release @alice.smith #release.md @ok. (#fine), \@one \\@two \\\#three \\\\#four @é @7 _@bad @bad_name`;
+  expect(parseTaskMarkdown(source).tasks[0]!.tokens.map((t) => t.source)).toEqual([
+    '@ok',
+    '#fine',
+    '@two',
+    '#four',
+    '@é',
+    '@7',
+    '@bad_name',
+  ]);
 });
