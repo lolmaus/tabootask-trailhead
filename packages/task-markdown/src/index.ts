@@ -1,8 +1,11 @@
+import { recognize } from './tokens.ts';
 import { structure } from './structure.ts';
 import type { TaskDocument, ClassifiedDate, DateOptions } from './types.ts';
 export type * from './types.ts';
 export function parseTaskMarkdown(source: string): TaskDocument {
-  return structure(source);
+  const document = structure(source);
+  recognize(document);
+  return document;
 }
 export function classifyTaskDates(
   _document: TaskDocument,
