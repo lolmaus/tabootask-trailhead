@@ -58,7 +58,9 @@ export function structure(source: string): TaskDocument {
       const htmlTags: string[] = [];
       for (const child of node.children) {
         if (child.type === 'html') {
-          const tag = /^<(\/?)([a-z][a-z0-9-]*)\b[^>]*>$/iu.exec(child.value);
+          // The AST has already validated HTML syntax, including quoted '>'.
+          // Read only tag identity rather than revalidating its attributes.
+          const tag = /^<(\/?)([a-z][a-z0-9-]*)\b/iu.exec(child.value);
           if (tag) {
             const name = tag[2]!.toLowerCase();
             if (tag[1] === '/') {
