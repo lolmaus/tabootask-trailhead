@@ -17,3 +17,12 @@ test('first active date preserves spelling and classifies at midnight equality',
   ]);
   expect(doc.source).toBe(source);
 });
+
+test('strict date-times retain written offsets and millisecond precision', () => {
+ const forms = ['2026-11-06T00:00','2026-11-06T00:00:00','2026-11-06T00:00Z','2026-11-06T03:00+03:00','2026-11-06T00:00:00.001Z','2026-11-06T00:00:00.01Z','2026-11-06T00:00:00.1Z','2026-11-06T00:00-23:59','2026-11-06T00:00+23:59'];
+ const source = forms.map(f=>'- '+f).join('\n');
+ const doc = parseTaskMarkdown(source);
+ expect(doc.tasks.map(t=>t.date?.source)).toEqual(forms);
+ expect(classifyTaskDates(doc,{nowEpochMilliseconds:now,viewerZone:'UTC'}).map(d=>d.epochMilliseconds-now)).toEqual([0,0,0,0,1,10,100,86340000,-86340000]);
+ expect(doc.source).toBe(source);
+});
