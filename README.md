@@ -38,4 +38,7 @@ and a verified restore.
 `classifyTaskDates(document, { nowEpochMilliseconds, viewerZone })` for browser
 consumers. Ranges are end-exclusive UTF-16 source offsets; totals are bigint.
 The returned source is unchanged. Dates retain their written spelling; timing
-classification is separate and can rerun as the clock advances.
+classification is separate and can rerun as the clock advances. For display,
+use the date token’s `source` to retain its written time and offset. Local
+browser/test configs select ES2024 libraries because the Temporal polyfill
+supplies its own types; this avoids conflicting native ESNext declarations.

@@ -1,4 +1,7 @@
 {
   "extends": "@repo/typescript-config/tsconfig.browser.json",
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "compilerOptions": {
+    "lib": ["ES2024", "DOM", "DOM.Iterable"]
+  }
 }
