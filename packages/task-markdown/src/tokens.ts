@@ -18,7 +18,9 @@ export function standalone(
   const textBoundary = end === eligible.end;
   while (source[end] === '*' || (textBoundary && source[end] === '_')) end++;
   if (/[\p{L}\p{N}\p{M}_@#~./+-]/u.test(source[before - 1] ?? '')) return false;
-  if (/[a-z][a-z0-9+.-]*:\/\/[^\s]*$/iu.test(source.slice(0, start))) return false;
+  let wordStart = start;
+  while (wordStart > 0 && !/\s/u.test(source[wordStart - 1]!)) wordStart--;
+  if (/[a-z][a-z0-9+.-]*:\/\//iu.test(source.slice(wordStart, start))) return false;
   const after = source[end] ?? '';
   if (
     after === ':' &&
