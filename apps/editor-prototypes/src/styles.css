@@ -268,6 +268,31 @@ textarea:focus-visible {
 .cm-line {
   padding: 0;
 }
+.markdown-heading {
+  color: var(--ink);
+  font-weight: 700;
+}
+.markdown-heading-1 {
+  font-size: 1.65em;
+}
+.markdown-heading-2 {
+  font-size: 1.45em;
+}
+.markdown-heading-3 {
+  font-size: 1.3em;
+}
+.markdown-heading-4 {
+  font-size: 1.2em;
+}
+.markdown-heading-5 {
+  font-size: 1.1em;
+}
+.markdown-heading-6 {
+  font-size: 1em;
+}
+.rich-heading .markdown-heading {
+  font-size: inherit;
+}
 .cm-editor.cm-focused {
   outline: none;
 }

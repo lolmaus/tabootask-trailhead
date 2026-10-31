@@ -1,6 +1,60 @@
 import { expect, test } from '@playwright/test';
 import type { Variant } from '../src/editor.ts';
 
+test('highlighted source gives ordinary Markdown visible formatting without changing source', async ({
+  page,
+}) => {
+  await page.goto('/?variant=highlight');
+  await page.waitForFunction(() => !!window.editorLab);
+  const source =
+    '# Heading one\n\n## Heading two\n\n### Heading three\n\n#### Heading four\n\n##### Heading five\n\n###### Heading six\n\nSetext heading\n==============\n\nPlain text\n\n**Bold words** and *italic words* and `inline code`\n\n[Example link](https://example.test)\n';
+  await page.evaluate((text) => window.editorLab!.load(text), source);
+  for (const theme of ['Light', 'Dark']) {
+    await page.getByRole('combobox', { name: 'Appearance' }).click();
+    await page.getByRole('option', { name: theme, exact: true }).click();
+    const plain = page.locator('.cm-line').filter({ hasText: /^Plain text$/ });
+    const bodySize = await plain.evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize));
+    let previousSize = Number.POSITIVE_INFINITY;
+    for (const [index, word] of ['one', 'two', 'three', 'four', 'five', 'six'].entries()) {
+      const heading = page
+        .locator('.cm-line')
+        .filter({ hasText: new RegExp(`^${'#'.repeat(index + 1)} Heading ${word}$`) })
+        .locator('span')
+        .last();
+      const style = await heading.evaluate((el) => {
+        const css = getComputedStyle(el);
+        return {
+          size: Number.parseFloat(css.fontSize),
+          weight: Number.parseInt(css.fontWeight, 10),
+        };
+      });
+      expect(style.weight).toBeGreaterThanOrEqual(600);
+      expect(style.size).toBeGreaterThanOrEqual(bodySize);
+      expect(style.size).toBeLessThan(previousSize);
+      previousSize = style.size;
+    }
+    const setext = page
+      .locator('.cm-line')
+      .filter({ hasText: /^Setext heading$/ })
+      .locator('span');
+    await expect(setext).toHaveCSS('font-weight', '700');
+    expect(
+      await setext.evaluate((el) => Number.parseFloat(getComputedStyle(el).fontSize))
+    ).toBeGreaterThan(bodySize);
+    await expect(page.getByText('Bold words', { exact: true })).toHaveCSS('font-weight', '700');
+    await expect(page.getByText('italic words', { exact: true })).toHaveCSS('font-style', 'italic');
+    await expect(page.getByText('Example link', { exact: true })).toHaveCSS(
+      'text-decoration-line',
+      'underline'
+    );
+    const codeBackground = await page
+      .getByText('inline code', { exact: true })
+      .evaluate((el) => getComputedStyle(el).backgroundColor);
+    expect(codeBackground).not.toBe('rgba(0, 0, 0, 0)');
+    expect(await page.evaluate(() => window.editorLab!.source())).toBe(source);
+  }
+});
+
 test('copy action explains unavailable browser clipboard without throwing', async ({ page }) => {
   await page.addInitScript(() => {
     Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true });

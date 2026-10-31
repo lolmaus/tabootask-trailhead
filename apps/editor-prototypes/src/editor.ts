@@ -298,9 +298,26 @@ export function createEditor(
       syntaxHighlighting(
         HighlightStyle.define([
           ...defaultHighlightStyle.specs,
-          { tag: [tags.url, tags.link], color: 'var(--link)' },
-          { tag: [tags.monospace, tags.string], color: 'var(--code-text)' },
-          { tag: tags.heading, color: 'var(--ink)' },
+          { tag: [tags.url, tags.link], color: 'var(--link)', textDecoration: 'underline' },
+          { tag: tags.string, color: 'var(--code-text)' },
+          {
+            tag: tags.monospace,
+            color: 'var(--code-text)',
+            backgroundColor: 'var(--code)',
+            borderRadius: '3px',
+          },
+          { tag: tags.heading, class: 'markdown-heading' },
+          ...[
+            tags.heading1,
+            tags.heading2,
+            tags.heading3,
+            tags.heading4,
+            tags.heading5,
+            tags.heading6,
+          ].map((tag, index) => ({
+            tag,
+            class: `markdown-heading markdown-heading-${index + 1}`,
+          })),
           { tag: tags.quote, color: 'var(--muted)' },
           { tag: [tags.escape, tags.invalid], color: 'inherit' },
         ])
