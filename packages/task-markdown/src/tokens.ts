@@ -25,6 +25,11 @@ export function recognize(document: TaskDocument): void {
         if (!standalone(document.source, start, start + match[0].length)) continue;
         if (/^[0-9]/u.test(match[0])) {
           if (task.date || !validDate(match[0])) continue;
+          if (
+            match[0].length === 10 &&
+            /^[ \t]+[0-9]{1,2}:/u.test(document.source.slice(start + 10))
+          )
+            continue;
           const token: DateToken = {
             kind: 'date',
             source: match[0],
