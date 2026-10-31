@@ -35,3 +35,15 @@ test('code, quotations, URLs, images and raw HTML remain literal', () => {
     parseTaskMarkdown('Outside ~3 @alice\n\n> - Quoted ~5\n\n<div>\n- HTML ~9\n</div>').tasks
   ).toEqual([]);
 });
+
+test('raw HTML attributes containing quoted greater-than signs stay literal', () => {
+  for (const quote of ['"', "'"]) {
+    const source = `- <span title=${quote}>${quote}>~7 @html #html 2026-11-06</span> ~4 @real #real 2026-11-07`;
+    const doc = parseTaskMarkdown(source);
+    expect(doc.tasks[0]!.tokens.map(t => t.source)).toEqual(['~4', '@real', '#real', '2026-11-07']);
+    expect(doc.tasks[0]!.ownEstimate?.value).toBe(4n);
+    expect(doc.tasks[0]!.total).toBe(4n);
+    expect(doc.tasks[0]!.date?.source).toBe('2026-11-07');
+    expect(doc.source).toBe(source);
+  }
+});
