@@ -22,3 +22,13 @@ test('ordinary list items own continuations and independent descendants', () => 
     'After',
   ]);
 });
+
+test('code, quotations, URLs, images and raw HTML remain literal', () => {
+ const source = '- Prose [Ask @alice #release](https://example.test/2026-11-06/~90) ![~80 @image](image) <https://example.test/2026-11-06> <span title="~70">@html ~60</span>\n  `~90 2026-11-06 @code #code`\n\n  > ~80 @quote\n  > - Quoted ~70\n\n  ```markdown\n  - Example ~60 2026-11-06\n  ```\n\n      ~50 2026-11-06 @indented #indented\n';
+ const doc = parseTaskMarkdown(source);
+ expect(doc.tasks).toHaveLength(1);
+ expect(doc.tasks[0]!.tokens.map(t=>t.source)).toEqual(['@alice','#release']);
+ expect(doc.tasks[0]!.hasEstimate).toBe(false);
+ expect(doc.source).toBe(source);
+ expect(parseTaskMarkdown('Outside ~3 @alice\n\n> - Quoted ~5\n\n<div>\n- HTML ~9\n</div>').tasks).toEqual([]);
+});
