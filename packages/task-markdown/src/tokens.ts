@@ -1,12 +1,24 @@
 import { validDate } from './dates.ts';
-import type { DateToken, EstimateToken, TaskDocument } from './types.ts';
+import type { DateToken, EstimateToken, SourceRange, TaskDocument } from './types.ts';
 
 // Inspect original source, including context outside an eligible AST text node.
-export function standalone(source: string, start: number, end: number): boolean {
+export function standalone(
+  source: string,
+  start: number,
+  end: number,
+  eligible: SourceRange
+): boolean {
   let before = start;
   while (source[before - 1] === '\\') before--;
   if ((start - before) % 2 === 1) return false;
+  // Formatting delimiters are absent from this AST text range. Look through
+  // those delimiters so decoration cannot turn part of a word into a token.
+  while (source[before - 1] === '*' || (start === eligible.start && source[before - 1] === '_'))
+    before--;
+  const textBoundary = end === eligible.end;
+  while (source[end] === '*' || (textBoundary && source[end] === '_')) end++;
   if (/[\p{L}\p{N}\p{M}_@#~./+-]/u.test(source[before - 1] ?? '')) return false;
+  if (/[a-z][a-z0-9+.-]*:\/\/[^\s]*$/iu.test(source.slice(0, start))) return false;
   const after = source[end] ?? '';
   if (
     after === ':' &&
@@ -27,7 +39,7 @@ export function recognize(document: TaskDocument): void {
         /[@#][\p{L}\p{N}][\p{L}\p{N}\p{M}_-]*|~[0-9]+|[0-9]{4}-[0-9]{2}-[0-9]{2}(?:T[0-9]{2}:[0-9]{2}(?::[0-9]{2}(?:\.[0-9]{1,3})?)?(?:Z|[+-][0-9]{2}:[0-9]{2})?)?/gu
       )) {
         const start = range.start + match.index;
-        if (!standalone(document.source, start, start + match[0].length)) continue;
+        if (!standalone(document.source, start, start + match[0].length, range)) continue;
         if (/^[0-9]/u.test(match[0])) {
           if (task.date || !validDate(match[0]) || document.source[start + match[0].length] === '[')
             continue;

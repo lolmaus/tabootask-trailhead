@@ -60,6 +60,10 @@ test('sentence punctuation surrounds tokens without accepting date extensions', 
 });
 
 test('formatted tokens remain standalone and bare URL query text stays literal', () => {
- const source = '- a**~3** word**@alice** **@bob**tail _@carol_ **~4**\n- https://example.test/?who=@alice&size=~3&tag=#release&date=2026-11-06 @real';
- expect(parseTaskMarkdown(source).tasks.map(t=>t.tokens.map(k=>k.source))).toEqual([['@carol','~4'],['@real']]);
+  const source =
+    '- a**~3** word**@alice** **@bob**tail _@carol_ **~4**\n- https://example.test/?who=@alice&size=~3&tag=#release&date=2026-11-06 @real';
+  expect(parseTaskMarkdown(source).tasks.map((t) => t.tokens.map((k) => k.source))).toEqual([
+    ['@carol', '~4'],
+    ['@real'],
+  ]);
 });
