@@ -1,4 +1,5 @@
-import type { EstimateToken, TaskDocument } from './types.ts';
+import { validDate } from './dates.ts';
+import type { DateToken, EstimateToken, TaskDocument } from './types.ts';
 
 // Inspect original source, including context outside an eligible AST text node.
 export function standalone(source: string, start: number, end: number): boolean {
@@ -17,9 +18,22 @@ export function recognize(document: TaskDocument): void {
   for (const task of document.tasks) {
     for (const range of task.proseRanges) {
       const prose = document.source.slice(range.start, range.end);
-      for (const match of prose.matchAll(/[@#][\p{L}\p{N}][\p{L}\p{N}\p{M}_-]*|~[0-9]+/gu)) {
+      for (const match of prose.matchAll(
+        /[@#][\p{L}\p{N}][\p{L}\p{N}\p{M}_-]*|~[0-9]+|[0-9]{4}-[0-9]{2}-[0-9]{2}/gu
+      )) {
         const start = range.start + match.index;
         if (!standalone(document.source, start, start + match[0].length)) continue;
+        if (/^[0-9]/u.test(match[0])) {
+          if (task.date || !validDate(match[0])) continue;
+          const token: DateToken = {
+            kind: 'date',
+            source: match[0],
+            range: { start, end: start + match[0].length },
+          };
+          task.date = token;
+          task.tokens.push(token);
+          continue;
+        }
         if (match[0][0] === '~') {
           if (task.ownEstimate) continue;
           const token: EstimateToken = {

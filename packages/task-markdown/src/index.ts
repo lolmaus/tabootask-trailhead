@@ -1,6 +1,6 @@
 import { recognize, calculate } from './tokens.ts';
 import { structure } from './structure.ts';
-import type { TaskDocument, ClassifiedDate, DateOptions } from './types.ts';
+import type { TaskDocument } from './types.ts';
 export type * from './types.ts';
 export function parseTaskMarkdown(source: string): TaskDocument {
   const document = structure(source);
@@ -8,9 +8,4 @@ export function parseTaskMarkdown(source: string): TaskDocument {
   calculate(document);
   return document;
 }
-export function classifyTaskDates(
-  _document: TaskDocument,
-  _options: DateOptions
-): ClassifiedDate[] {
-  return [];
-}
+export { classifyTaskDates } from './dates.ts';
