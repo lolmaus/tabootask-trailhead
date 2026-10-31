@@ -58,3 +58,8 @@ test('sentence punctuation surrounds tokens without accepting date extensions', 
     parseTaskMarkdown('- 2026-11-06T00:00[Europe/Berlin] 2026-11-07').tasks[0]!.date?.source
   ).toBe('2026-11-07');
 });
+
+test('formatted tokens remain standalone and bare URL query text stays literal', () => {
+ const source = '- a**~3** word**@alice** **@bob**tail _@carol_ **~4**\n- https://example.test/?who=@alice&size=~3&tag=#release&date=2026-11-06 @real';
+ expect(parseTaskMarkdown(source).tasks.map(t=>t.tokens.map(k=>k.source))).toEqual([['@carol','~4'],['@real']]);
+});
