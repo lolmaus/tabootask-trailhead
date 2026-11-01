@@ -1,0 +1,11 @@
+{
+  "extends": "@repo/typescript-config/tsconfig.node.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2023", "DOM"],
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["./*.ts"],
+  "exclude": ["./_generated"]
+}
