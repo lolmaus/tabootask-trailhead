@@ -1,10 +1,11 @@
 {
-  "extends": "@repo/typescript-config/tsconfig.node.json",
+  "extends": "@repo/typescript-config/tsconfig.base.json",
   "compilerOptions": {
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "lib": ["ES2023", "DOM"],
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "types": []
   },
   "include": ["./*.ts"],
   "exclude": ["./_generated"]

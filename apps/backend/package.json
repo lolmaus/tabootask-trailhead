@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "convex dev",
+    "dev": "CONVEX_AGENT_MODE=anonymous convex dev --local-cloud-port 3212 --local-site-port 3213",
     "lint": "oxlint --deny-warnings .",
-    "typecheck": "tsc --project tsconfig.json && tsc --project tsconfig.test.json",
+    "typecheck": "tsc --project convex/tsconfig.json && tsc --project tsconfig.node.json && tsc --project tsconfig.test.json",
     "test": "vitest run"
   },
   "dependencies": {

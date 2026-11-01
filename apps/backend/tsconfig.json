@@ -1,4 +1,14 @@
 {
-  "extends": "@repo/typescript-config/tsconfig.node.json",
-  "include": ["convex/schema.ts", "convex/probe.ts", "protocol.ts", "oxlint.config.mts"]
+  "files": [],
+  "references": [
+    {
+      "path": "./convex/tsconfig.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.test.json"
+    }
+  ]
 }

@@ -10,7 +10,8 @@
     "lint:fix": "oxlint --deny-warnings --fix .",
     "typecheck": "tsc --project tsconfig.browser.json && tsc --project tsconfig.node.json && tsc --project tsconfig.vitest.json && tsc --project tsconfig.playwright.json",
     "test": "vitest run",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "test:collaboration": "playwright test --config playwright.collaboration.config.ts"
   },
   "dependencies": {
     "@codemirror/collab": "6.1.1",

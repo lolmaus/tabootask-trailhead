@@ -24,9 +24,13 @@ Git's ordinary `--no-verify` bypass is available.
 The local [editor experiments](apps/editor-prototypes/README.md) compare three
 source-preserving renderings with the shared parser. Run them with
 `pnpm --filter @repo/editor-prototypes dev` and open <http://localhost:3100/>.
-They are throwaway prototypes, with no persistence or backend.
+They are throwaway prototypes. The separate collaboration probe at
+<http://localhost:3100/?lab=collaboration> uses the disposable local Convex
+authority in `apps/backend`; run `pnpm --filter @repo/backend dev` alongside
+the editor. Its run instructions and evidence limits are in the prototype README.
 
-Add `apps/web` and `apps/backend` incrementally as their real features arrive.
+Add the production `apps/web` and production backend features incrementally.
+The current `apps/backend` contains only the local collaboration authority probe.
 Each consumer declares its tools and types directly, uses `workspace:*` for
 shared configs, and owns source paths in local environment configs. Create only
 active environments; check every local leaf with `tsc --noEmit --project` and
