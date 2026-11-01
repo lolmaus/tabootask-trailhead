@@ -37,7 +37,7 @@ export default function CollaborationLab() {
     let disposed = false;
     let transport: Transport | undefined;
     let current: Session | undefined;
-    const preserved: Session['drafts'] = [];
+    let preserved: Session['drafts'] = [];
     const boot = async (snapshot?: Snapshot): Promise<void> => {
       const nextTransport = transport ?? new Transport(url);
       transport = nextTransport;
@@ -45,7 +45,7 @@ export default function CollaborationLab() {
       if (disposed || !host.current) return;
       if (current) {
         current.preserve('Before reopening latest');
-        preserved.push(...current.drafts);
+        preserved = current.drafts.slice(-4);
         current.stop();
         current.editor.destroy();
       }
