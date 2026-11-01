@@ -26,10 +26,22 @@ test('manual autosave continues when another edit occurs during an in-flight sav
   vi.useFakeTimers();
   let draft = 'first';
   let finish: (value: SaveResult) => void = () => {};
-  const save = vi.fn(() => new Promise<SaveResult>((resolve) => { finish = resolve; }));
+  const save = vi.fn(
+    () =>
+      new Promise<SaveResult>((resolve) => {
+        finish = resolve;
+      })
+  );
   const editor = { source: () => draft } as EditorController;
   const transport = { save, watchSnapshot: () => () => {} } as unknown as Transport;
-  const session = new Session(editor, transport, { key: 'fixture', token: 'fixture' }, 'manual', { source: '', version: 0, epoch: 0, floor: 0 }, () => {});
+  const session = new Session(
+    editor,
+    transport,
+    { key: 'fixture', token: 'fixture' },
+    'manual',
+    { source: '', version: 0, epoch: 0, floor: 0 },
+    () => {}
+  );
   try {
     session.changed();
     await vi.advanceTimersByTimeAsync(120);
@@ -40,5 +52,8 @@ test('manual autosave continues when another edit occurs during an in-flight sav
     finish({ kind: 'saved', snapshot: { source: 'first', version: 1, epoch: 0, floor: 1 } });
     await vi.advanceTimersByTimeAsync(120);
     expect(save).toHaveBeenCalledTimes(2);
-  } finally { session.stop(); vi.useRealTimers(); }
+  } finally {
+    session.stop();
+    vi.useRealTimers();
+  }
 });

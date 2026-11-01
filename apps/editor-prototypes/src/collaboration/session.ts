@@ -145,7 +145,7 @@ export class Session {
       if (!this.stopped) this.block(String(failure), null);
     } finally {
       this.busy = false;
-      if (!this.stopped) this.notify();
+      if (!this.stopped) this.changed();
     }
   }
   pause(): void {
