@@ -5,3 +5,8 @@ node_modules/
 .turbo/
 dist/
 *.tsbuildinfo
+
+# Disposable local Convex deployment and generated machine settings
+.convex/
+.env.local
+apps/backend/convex/_generated/
