@@ -9,4 +9,6 @@ dist/
 # Disposable local Convex deployment and generated machine settings
 .convex/
 .env.local
-apps/backend/convex/_generated/
+apps/backend/convex/_generated/*
+!apps/backend/convex/_generated/api.js
+!apps/backend/convex/_generated/api.d.ts

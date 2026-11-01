@@ -39,3 +39,7 @@ a production onboarding flow.
 `pnpm test`, `pnpm typecheck`, and `pnpm lint` check this package. Tests invoke
 registered public functions with convex-test; the browser probe separately
 exercises a real local Convex deployment.
+
+The backend commits its generated API reference and declaration so convex-test
+can discover function roots from a clean checkout without starting a backend.
+Machine deployment settings and the other generated helpers remain ignored.

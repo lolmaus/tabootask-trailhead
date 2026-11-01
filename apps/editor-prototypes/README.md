@@ -130,3 +130,7 @@ note in this probe, so its database reads/writes include that growing record;
 small OT network deltas do not imply equally small database bandwidth. A
 production history layout, retention period, auth and cost model remain open.
 Findings and the recommendation live on GitHub ticket #11.
+
+The backend commits its generated API reference and declaration so convex-test
+can discover function roots from a clean checkout without starting a backend.
+Machine deployment settings and the other generated helpers remain ignored.
