@@ -130,3 +130,16 @@ it('bounds snapshot history bytes within one Convex document', async () => {
     });
   expect((await t.query(api.probe!.stats!, credentials)).historyBytes).toBeLessThanOrEqual(300_000);
 });
+
+it('bounds retained operational bytes as well as update count', async () => {
+  const t = await fixture('ot', '');
+  let length = 0;
+  for (let version = 0; version < 7; version++) {
+    const source = String(version).repeat(99_000);
+    const update = { clientID: `large-${version}`, changes: ChangeSet.of({ from: 0, to: length, insert: source }, length).toJSON() };
+    await t.mutation(api.probe!.push!, { ...credentials, version, epoch: 0, updates: [update] });
+    length = source.length;
+  }
+  const stats = await t.query(api.probe!.stats!, credentials);
+  expect(stats.logBytes).toBeLessThanOrEqual(512_000);
+});
