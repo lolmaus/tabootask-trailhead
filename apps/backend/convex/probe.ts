@@ -155,7 +155,20 @@ export const push = mutation({
         .query('ops')
         .withIndex('by_note_version', (q) => q.eq('note', n._id))
         .collect();
-      const expired = all.slice(0, Math.max(0, all.length - 128));
+      let count = all.length;
+      let logBytes = bytes(
+        all.map(({ version, clientID, changes }) => ({ version, clientID, changes }))
+      );
+      let expiredCount = 0;
+      while (count > 128 || logBytes > 512_000) {
+        const op = all[expiredCount]!;
+        logBytes -=
+          bytes({ version: op.version, clientID: op.clientID, changes: op.changes }) +
+          Number(count > 1);
+        expiredCount++;
+        count--;
+      }
+      const expired = all.slice(0, expiredCount);
       for (const op of expired) await ctx.db.delete(op._id);
       await ctx.db.patch(n._id, {
         source: source.toString(),

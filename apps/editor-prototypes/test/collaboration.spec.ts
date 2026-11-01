@@ -1,3 +1,4 @@
+import type {} from '../src/collaboration/driver.ts';
 import { expect, test } from '@playwright/test';
 import { ConvexHttpClient } from 'convex/browser';
 import { probeApi } from '../src/collaboration/transport.ts';

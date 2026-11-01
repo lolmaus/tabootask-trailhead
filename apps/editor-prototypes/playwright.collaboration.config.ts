@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './test',
-  testMatch: 'collaboration.spec.ts',
+  testMatch: /(?:collaboration|probe-matrix)\.spec\.ts/u,
   timeout: 45_000,
   workers: 1,
   use: { baseURL: 'http://127.0.0.1:3100' },

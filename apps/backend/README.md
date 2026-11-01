@@ -21,7 +21,7 @@ records the preceding and restored sources, and drops the operation log.
 `compact` also requires the owner and drops only the log. `revoke` invalidates an
 editor fixture capability for subsequent reads and writes.
 
-Prototype retention policy: at most 128 operations and 32 independent source
+Prototype retention policy: at most 128 operations and 512,000 logical JSON bytes of operations, plus 32 independent source
 history snapshots per note, with a 300,000-byte JSON UTF-8 history budget
 that evicts oldest snapshots first. Source strings are limited to 100,000 UTF-16
 code units and 140,000 JSON UTF-8 bytes (so both sides of a restore fit in history); pushes to 64 updates and 200,000 serialized characters. Source snapshots

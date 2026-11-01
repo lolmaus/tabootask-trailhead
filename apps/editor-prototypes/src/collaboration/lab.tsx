@@ -9,29 +9,7 @@ import type { Snapshot } from '../../../backend/protocol.ts';
 
 const url = import.meta.env['VITE_CONVEX_URL'] ?? 'http://127.0.0.1:3212';
 const seed = '- [ ] Plan ~3\n  - Child ~2\n\n- Second task ~5\n';
-export interface ProbeDriver {
-  source(): string;
-  edit(from: number, to: number, insert: string): void;
-  pause(): void;
-  resume(): void;
-  flush(): Promise<void>;
-  undo(): boolean;
-  info(): {
-    pending: number;
-    version: number;
-    status: string;
-    recovery: Session['recovery'];
-    drafts: Session['drafts'];
-    traffic: Transport['traffic'];
-    metrics: ReturnType<Session['editor']['metrics']>;
-  };
-  reopen(): Promise<void>;
-}
-declare global {
-  interface Window {
-    collabLab?: ProbeDriver;
-  }
-}
+import type {} from './driver.ts';
 
 export default function CollaborationLab() {
   const host = useRef<HTMLDivElement>(null);
