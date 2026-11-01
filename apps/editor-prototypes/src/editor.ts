@@ -1,5 +1,5 @@
 import { EditorSelection, RangeSet, StateEffect, StateField } from '@codemirror/state';
-import type { EditorState, Range } from '@codemirror/state';
+import type { EditorState, Extension, Range } from '@codemirror/state';
 import {
   Decoration,
   EditorView,
@@ -319,13 +319,15 @@ declare global {
 export function createEditor(
   parent: HTMLElement,
   source: string,
-  onUpdate: (controller: EditorController) => void
+  onUpdate: (controller: EditorController) => void,
+  extensions: Extension[] = []
 ): EditorController {
   let controller: EditorController;
   let alive = true;
   const view = new EditorView({
     parent,
     state: sourceState(source, [
+      ...extensions,
       variantField,
       compositionField,
       zoneField,
