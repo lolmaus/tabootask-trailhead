@@ -7,7 +7,8 @@ import type { Mode } from './session.ts';
 import { probeApi, Transport } from './transport.ts';
 import type { Snapshot } from '../../../backend/protocol.ts';
 
-const url = import.meta.env['VITE_CONVEX_URL'] ?? 'http://127.0.0.1:3212';
+const backendUrl = (): string =>
+  import.meta.env['VITE_CONVEX_URL'] ?? `${window.location.origin}/convex`;
 const seed = '- [ ] Plan ~3\n  - Child ~2\n\n- Second task ~5\n';
 import type {} from './driver.ts';
 
@@ -39,7 +40,7 @@ export default function CollaborationLab() {
     let current: Session | undefined;
     let preserved: Session['drafts'] = [];
     const boot = async (snapshot?: Snapshot): Promise<void> => {
-      const nextTransport = transport ?? new Transport(url);
+      const nextTransport = transport ?? new Transport(backendUrl());
       transport = nextTransport;
       const opened = snapshot ?? (await nextTransport.open({ key: note, token }));
       if (disposed || !host.current) return;
@@ -102,7 +103,7 @@ export default function CollaborationLab() {
   }, [note, token, mode, clientID]);
 
   async function create(nextMode: Mode): Promise<void> {
-    const transport = new Transport(url);
+    const transport = new Transport(backendUrl());
     try {
       const key = crypto.randomUUID();
       const ownerToken = crypto.randomUUID();

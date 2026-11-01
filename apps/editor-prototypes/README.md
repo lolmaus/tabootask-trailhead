@@ -70,7 +70,8 @@ pnpm --filter @repo/editor-prototypes dev
 ```
 
 Open <http://localhost:3100/?lab=collaboration>. Choose **Start OT pair** or
-**Start manual-save pair**, then **Open second editor**. The backend script
+**Start manual-save pair**, then **Open second editor**. The browser connects through Vite’s same-origin `/convex` proxy, so opening the
+Vite URL through a forwarded port also forwards Convex WebSockets. The backend script
 uses anonymous local development, pins cloud/API port 3212 and HTTP-actions
 port 3213, and persists its disposable data in ignored `.convex/` files.
 The CLI may download its backend binary on the first run; no hosted account

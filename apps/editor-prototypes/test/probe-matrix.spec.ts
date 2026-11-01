@@ -63,7 +63,11 @@ async function pair(browser: Browser, mode: Mode, source: string) {
       const page = await context.newPage();
       const frames = wire[client as 'alice' | 'bob'];
       page.on('websocket', (socket) => {
-        if (!socket.url().startsWith('ws://127.0.0.1:3212/')) return;
+        if (
+          !socket.url().includes('/convex/api/') &&
+          !socket.url().startsWith('ws://127.0.0.1:3212/')
+        )
+          return;
         socket.on('framesent', ({ payload }) => {
           frames.sent++;
           frames.sentBytes += Buffer.byteLength(payload);
