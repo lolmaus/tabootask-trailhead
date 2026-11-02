@@ -7,13 +7,26 @@ import type {
   GenericQueryCtx,
 } from 'convex/server';
 import { v } from 'convex/values';
-import { authComponent } from './auth.ts';
+import { authComponent, createAuth } from './auth.ts';
 import type schema from './schema.ts';
 
 type Model = DataModelFromSchemaDefinition<typeof schema>;
 const query: QueryBuilder<Model, 'public'> = queryGeneric;
 const mutation: MutationBuilder<Model, 'public'> = mutationGeneric;
 const args = { key: v.string() };
+
+export const unlinkAccount = mutation({
+  args: {
+    providerId: v.union(v.literal('google'), v.literal('github')),
+    accountId: v.optional(v.string()),
+  },
+  handler: async (ctx, body): Promise<{ status: boolean }> => {
+    await authComponent.getAuthUser(ctx);
+    const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
+    // Nested component reads/writes participate in this parent transaction.
+    return await auth.api.unlinkAccount({ body, headers });
+  },
+});
 
 async function owned(ctx: GenericQueryCtx<Model>, key: string) {
   const user = await authComponent.getAuthUser(ctx);

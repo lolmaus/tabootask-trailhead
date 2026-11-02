@@ -74,10 +74,30 @@ test('local substituted providers exercise real callbacks, explicit linking, ses
   await page.getByRole('button', { name: 'Unlink github', exact: true }).click();
   await expect(page.getByTestId('action-result')).toContainText('true');
   await page.getByRole('button', { name: 'Unlink google', exact: true }).click();
-  await expect(page.getByTestId('action-result')).toContainText('FAILED_TO_UNLINK_LAST_ACCOUNT');
+  await expect(page.getByTestId('action-result')).toContainText('last account');
   await oauth(page, 'Connect github', 'different');
   await expect(page).toHaveURL(/error=email/u);
   await expect(page.getByTestId('identity')).toHaveText(userId!);
+  await oauth(page, 'Connect github');
+  // A tab that was signed out does not automatically adopt a new OAuth session.
+  await tab.reload();
+  await expect(tab.getByTestId('identity')).toHaveText(userId!);
+  await page.getByRole('button', { name: 'List sign-in methods' }).click();
+  await tab.getByRole('button', { name: 'List sign-in methods' }).click();
+  await Promise.all([
+    page.getByRole('button', { name: 'Unlink github', exact: true }).click(),
+    tab.getByRole('button', { name: 'Unlink google', exact: true }).click(),
+  ]);
+  await expect(page.getByTestId('action-result')).toContainText(/"status": true|last account/u);
+  await expect(tab.getByTestId('action-result')).toContainText(/"status": true|last account/u);
+  const unlinkResults = [
+    await page.getByTestId('action-result').textContent(),
+    await tab.getByTestId('action-result').textContent(),
+  ];
+  expect(unlinkResults.filter((result) => result?.includes('last account'))).toHaveLength(1);
+  expect(unlinkResults.filter((result) => result?.includes('"status": true'))).toHaveLength(1);
+  await page.getByRole('button', { name: 'List sign-in methods' }).click();
+  await expect(page.getByRole('button', { name: /^Unlink /u })).toHaveCount(1);
   await page.getByRole('button', { name: 'Delete fixture', exact: true }).click();
   await expect(visitor.getByTestId('public-note')).toHaveText('null');
   await page.getByRole('button', { name: 'Revoke all sessions' }).click();

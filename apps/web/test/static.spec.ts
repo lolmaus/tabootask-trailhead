@@ -2,7 +2,13 @@ import { expect, test } from '@playwright/test';
 
 test('loads a nested route and refreshes from static assets with cross-origin Convex and no BFF', async ({
   page,
+  request,
 }) => {
+  const blockedUnlink = await request.post('http://127.0.0.1:3213/api/auth/unlink-account', {
+    headers: { Origin: 'http://localhost:3200' },
+    data: { providerId: 'google' },
+  });
+  expect(blockedUnlink.status()).toBe(404);
   const frontendRequests: string[] = [];
   page.on('request', (request) => {
     if (new URL(request.url()).origin === 'http://localhost:3200')

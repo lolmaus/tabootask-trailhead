@@ -19,7 +19,8 @@ source in a private temporary directory, starts a fresh anonymous local Convex
 database, configures synthetic identities, builds Start, and runs Chromium through
 Wrangler's static asset handler. The initial Convex run may download its backend
 binary. It needs network access but no provider accounts or paid resources.
-It never copies existing deployment configuration or credentials.
+It never copies existing deployment configuration or credentials and removes
+deployment selectors/service variables inherited from the parent environment.
 
 The substitute identity service is unmistakably labeled and only enabled when
 `PROBE_LOCAL_OAUTH=1` **and** `CONVEX_SITE_URL=http://127.0.0.1:3213`. Any other
@@ -118,14 +119,20 @@ refer to the same environment. No wildcard trusted origins are used.
   The browser sends `Better-Auth-Cookie` to Convex and omits browser credentials.
   A successful OAuth return uses a short-lived, single-use `ott`; the official
   React provider consumes it and removes it from browser history.
+  A tab left signed out did not automatically adopt a later OAuth session from
+  another tab in this probe; reloading that tab restored it. A newly opened tab
+  and reload both retain the session. Cross-tab sign-in refresh needs attention
+  before production; revocation still blocks protected backend operations.
 - Sessions last one hour in this disposable fixture; cookie caching is disabled.
   Every protected function calls the component's session-backed auth-user
   helper. A still-valid JWT with a missing/expired session cannot authorize a
   write or history read. Do not replace that check with identity claims alone.
-- Sequential last-method unlink rejection is tested. The pinned library checks
-  account count and then deletes through separate adapter calls. Concurrent
-  unlink safety is a source-level concern that still needs a dedicated probe
-  or atomic guard before production. Unlinking alone does not revoke sessions.
+- The pinned library's stock HTTP unlink endpoint can race: concurrent calls can
+  remove both remaining providers. This prototype disables `/unlink-account`
+  and invokes Better Auth's unlink API inside one serializable Convex mutation.
+  Both sequential and two-client concurrent last-method protection are tested;
+  the disabled HTTP route is checked separately. Unlinking alone does not revoke
+  sessions.
 - Backend auth types need `skipLibCheck` for upstream declarations; application
   source remains strict. The React provider boundary has one documented type
   adaptation for an upstream `AuthClient` generic that infers session data as

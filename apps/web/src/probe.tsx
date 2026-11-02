@@ -32,6 +32,7 @@ function Fixture({ fixtureKey }: { fixtureKey: string }) {
   const create = useMutation(api.authProbe.create);
   const update = useMutation(api.authProbe.update);
   const remove = useMutation(api.authProbe.remove);
+  const unlinkAccount = useMutation(api.authProbe.unlinkAccount);
   const client = useConvex();
   const [source, setSource] = useState('');
   const [result, setResult] = useState('Ready');
@@ -120,7 +121,14 @@ function Fixture({ fixtureKey }: { fixtureKey: string }) {
         {accounts.map((account) => (
           <button
             key={account.providerId + account.accountId}
-            onClick={() => void run(() => authClient.unlinkAccount(account))}
+            onClick={() =>
+              void run(() =>
+                unlinkAccount({
+                  accountId: account.accountId,
+                  providerId: account.providerId as 'google' | 'github',
+                })
+              )
+            }
           >
             Unlink {account.providerId}
           </button>

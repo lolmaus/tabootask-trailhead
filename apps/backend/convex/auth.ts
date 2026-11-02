@@ -22,6 +22,9 @@ export function createAuth(ctx: GenericCtx<Model>) {
     throw new Error('Local OAuth fixture refused outside the exact loopback deployment');
   return betterAuth({
     appName: 'Taboo Task disposable auth probe',
+    // Unlinking must run in one serializable Convex mutation, not HTTP actions
+    // whose separate adapter calls can race and delete the last two accounts.
+    disabledPaths: ['/unlink-account'],
     baseURL,
     trustedOrigins: [siteUrl],
     database: authComponent.adapter(ctx),

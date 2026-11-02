@@ -125,3 +125,35 @@ it('rejects an expired session and a valid-looking JWT without a stored session'
   expect(await revoked.query(api.authProbe.identity)).toBeNull();
   await expect(revoked.mutation(api.authProbe.create, { key: 't22-revoked' })).rejects.toThrow();
 });
+
+it('unlinks through a session-backed mutation while retaining the last sign-in method', async () => {
+  const { t, user } = await fixture();
+  const owner = await user('unlink-owner');
+  const ref = makeFunctionReference<'mutation'>('authProbe:unlinkAccount');
+  for (const providerId of ['google', 'github'])
+    await t.run((ctx) =>
+      ctx.runMutation(components.betterAuth.adapter.create, {
+        input: {
+          model: 'account',
+          data: {
+            accountId: `${providerId}-owner`,
+            providerId,
+            userId: owner.userId,
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+          },
+        },
+      })
+    );
+  vi.stubEnv('SITE_URL', 'http://localhost:3200');
+  vi.stubEnv('CONVEX_SITE_URL', 'http://127.0.0.1:3213');
+  vi.stubEnv('BETTER_AUTH_SECRET', 'unit-fixture-only-secret-that-is-never-used-outside-tests');
+  try {
+    expect(await owner.client.mutation(ref, { providerId: 'github' })).toEqual({ status: true });
+    await expect(owner.client.mutation(ref, { providerId: 'google' })).rejects.toThrow(
+      /last account/u
+    );
+  } finally {
+    vi.unstubAllEnvs();
+  }
+});
