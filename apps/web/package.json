@@ -11,6 +11,7 @@
     "deploy:probe": "wrangler deploy",
     "lint": "oxlint --deny-warnings .",
     "typecheck": "tsc --project tsconfig.browser.json && tsc --project tsconfig.node.json && tsc --project tsconfig.playwright.json",
+    "test": "node --test test/*.test.mjs",
     "test:browser": "playwright test",
     "test:integration": "node scripts/local-integration.mjs"
   },

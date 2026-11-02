@@ -4,6 +4,7 @@ import { mkdtemp, open, rm, mkdir, cp, symlink, writeFile, readFile } from 'node
 import { tmpdir } from 'node:os';
 import { resolve, join } from 'node:path';
 import { setTimeout } from 'node:timers/promises';
+import { isolatedEnvironment } from './local-environment.mjs';
 
 const root = resolve(import.meta.dirname, '../../..');
 const local = 'http://127.0.0.1:3212';
@@ -13,10 +14,12 @@ const log = await open(join(directory, 'convex.log'), 'w', 0o600);
 const backend = join(directory, 'backend');
 const cli = join(root, 'apps/backend/node_modules/convex/bin/main.js');
 const children = [];
+const childEnv = isolatedEnvironment(process.env);
 let completed = false;
 function command(args) {
   return execFileSync(process.execPath, [cli, ...args], {
     cwd: backend,
+    env: childEnv,
     stdio: ['ignore', 'pipe', 'pipe'],
   }).toString();
 }
@@ -67,7 +70,7 @@ try {
       [cli, 'dev', '--local-cloud-port', '3212', '--local-site-port', '3213'],
       {
         cwd: backend,
-        env: { ...process.env, CONVEX_AGENT_MODE: 'anonymous' },
+        env: childEnv,
         detached: true,
         stdio: ['ignore', log.fd, log.fd],
       }
@@ -87,6 +90,7 @@ try {
   children.push(
     spawn(process.execPath, ['apps/web/test/fake-oauth.mjs'], {
       cwd: root,
+      env: childEnv,
       detached: true,
       stdio: ['ignore', log.fd, log.fd],
     })
@@ -110,7 +114,7 @@ try {
     ['--filter', '@repo/web', 'test:browser'],
   ]) {
     await new Promise((accept, reject) => {
-      const child = spawn('pnpm', args, { cwd: root, stdio: 'inherit' });
+      const child = spawn('pnpm', args, { cwd: root, env: childEnv, stdio: 'inherit' });
       child.once('error', reject);
       child.once('exit', (code) =>
         code === 0 ? accept() : reject(new Error(`Local proof failed (${code})`))
