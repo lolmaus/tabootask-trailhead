@@ -1,0 +1,5 @@
+{
+  "extends": "@repo/typescript-config/tsconfig.node.json",
+  "include": ["*.config.ts", "*.config.mts"],
+  "compilerOptions": { "skipLibCheck": true }
+}

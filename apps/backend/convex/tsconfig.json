@@ -5,7 +5,8 @@
     "moduleResolution": "Bundler",
     "lib": ["ES2023", "DOM"],
     "forceConsistentCasingInFileNames": true,
-    "types": []
+    "types": [],
+    "skipLibCheck": true
   },
   "include": ["./*.ts"],
   "exclude": ["./_generated"]

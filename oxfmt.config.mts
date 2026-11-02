@@ -5,6 +5,7 @@ export default defineConfig({
   trailingComma: 'es5',
   ignorePatterns: [
     'apps/editor-prototypes/src/routeTree.gen.ts',
+    'apps/web/src/routeTree.gen.ts',
     'apps/backend/convex/_generated/**',
   ],
 });

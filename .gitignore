@@ -4,6 +4,9 @@
 node_modules/
 .turbo/
 dist/
+test-results/
+playwright-report/
+.wrangler/
 *.tsbuildinfo
 
 # Disposable local Convex deployment and generated machine settings

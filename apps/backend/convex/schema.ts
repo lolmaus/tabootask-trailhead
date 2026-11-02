@@ -1,6 +1,13 @@
 import { defineSchema, defineTable } from 'convex/server';
 import { v } from 'convex/values';
 export default defineSchema({
+  authProbeNotes: defineTable({
+    key: v.string(),
+    owner: v.string(),
+    source: v.string(),
+    revision: v.number(),
+    history: v.array(v.string()),
+  }).index('by_key', ['key']),
   notes: defineTable({
     key: v.string(),
     source: v.string(),

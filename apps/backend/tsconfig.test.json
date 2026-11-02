@@ -1,5 +1,5 @@
 {
   "extends": "@repo/typescript-config/tsconfig.vitest.json",
-  "compilerOptions": { "types": ["node", "vitest/globals"] },
+  "compilerOptions": { "types": ["node", "vitest/globals"], "skipLibCheck": true },
   "include": ["test/**/*.ts"]
 }

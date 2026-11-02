@@ -1,0 +1,9 @@
+{
+  "extends": "@repo/typescript-config/tsconfig.react.json",
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "compilerOptions": {
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"],
+    "skipLibCheck": true
+  }
+}

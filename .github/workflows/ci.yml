@@ -25,3 +25,9 @@ jobs:
       - run: pnpm run typecheck
       - run: pnpm run test
       - run: pnpm run test:tooling
+      - name: Build the static SPA evaluation
+        run: pnpm --filter @repo/web build:local
+      - name: Install Chromium for the local auth integration proof
+        run: pnpm --filter @repo/web exec playwright install --with-deps chromium
+      - name: Exercise real local Convex and static assets with substitute OAuth providers
+        run: pnpm --filter @repo/web test:integration

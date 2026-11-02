@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "exports": {
+    "./api": "./convex/_generated/api.js"
+  },
   "scripts": {
     "dev": "CONVEX_AGENT_MODE=anonymous convex dev --local-cloud-port 3212 --local-site-port 3213",
     "lint": "oxlint --deny-warnings .",
@@ -12,6 +15,8 @@
   "dependencies": {
     "@codemirror/collab": "6.1.1",
     "@codemirror/state": "6.7.6",
+    "@convex-dev/better-auth": "0.12.6",
+    "better-auth": "1.6.33",
     "convex": "1.49.0"
   },
   "devDependencies": {
